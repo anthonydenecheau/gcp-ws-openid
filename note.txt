@@ -1,24 +1,24 @@
-cd ../../developpement/data/ws-openid/
-docker run -it --volume "/ws-openid/terraform":/terraform-code \
-  --volume "/ws-openid/packer":/packer \
-  --volume "/ws-openid/secrets":/secrets \
-  --volume "/ws-openid/vars":/vars \
+cd ../../developpement/data/gcp-ws-openid/
+docker run -it --volume "/gcp-ws-openid/terraform":/terraform-code \
+  --volume "/gcp-ws-openid/packer":/packer \
+  --volume "/gcp-ws-openid/secrets":/secrets \
+  --volume "/gcp-ws-openid/vars":/vars \
   --env TF_VAR_FILE=/vars/dev.tfvars \
   --env GOOGLE_PROJECT=rugged-shuttle-277619 \
-  --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/ws-openid.json" \
+  --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-ws-openid.json" \
   --workdir /terraform-code/ \
   thegaragebandofit/infra-as-code-tools:gcl275-ter0.12.18-pac1.5.1
   
 
 packer build -on-error=ask -var-file=ws-pedigree-dev-variables.json gcp_docker_debian_server.json
 
-docker run -it --volume "/ws-openid/terraform":/terraform-code \
-  --volume "/ws-openid/packer":/packer \
-  --volume "/ws-openid/secrets":/secrets \
-  --volume "/ws-openid/vars":/vars \
+docker run -it --volume "/gcp-ws-openid/terraform":/terraform-code \
+  --volume "/gcp-ws-openid/packer":/packer \
+  --volume "/gcp-ws-openid/secrets":/secrets \
+  --volume "/gcp-ws-openid/vars":/vars \
   --env TF_VAR_FILE=/vars/dev.tfvars \
   --env GOOGLE_PROJECT=rugged-shuttle-277619 \
-  --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/ws-openid.json" \
+  --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-ws-openid.json" \
   --workdir /terraform-code/ \
   thegaragebandofit/infra-as-code-tools:latest
   
@@ -28,7 +28,7 @@ terraform plan --var-file='/vars/dev.tfvars'
 terraform apply -auto-approve --var-file='/vars/dev.tfvars'
 terraform destroy -auto-approve --var-file='/vars/dev.tfvars'
   
-gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/ws-openid.json
+gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/gcp-ws-openid.json
 gcloud compute project-info describe --project rugged-shuttle-277619
 
 # SSL
