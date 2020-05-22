@@ -1,0 +1,7 @@
+version: '2'
+services:
+  webserver:
+    image: nginxdemos/nginx-hello
+    container_name: webserver
+    ports:
+      - "8080:8080"

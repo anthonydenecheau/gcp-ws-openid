@@ -1,0 +1,89 @@
+dist: xenial
+sudo: false
+language: generic
+git:
+  depth: 5
+notifications:
+  slack:
+    secure: BtG90eE/0rWUcVUIaM2oy/yil9N6Z326+undZtIldAqnxr5BE6kWkODwvYq8zahDm/ktJsiqFhPum39beItk09ZnIM8rnCbjes2v95xHJd4GKZXmavDzvUrkdssfnWTiT5bfO5QypR2oZ6S4vzFMU4ISDbLlDPsCXcG8u6qGqO5fi66UXDGUe25AN9MdP+gaoSTdX4fT5a6PKJvOaar8ID+vPnE7CjnjOZBjd1wzQptKhh66wjyzxYzNieov6/ihTre0UnV5OXABTh/m0WgrY6lzdlqCzYHCBkqztB1Rznxj2VKn5jdqYhP5pYCzvoMGUW7nq9MGcDOY4u39r0UxH03/XzbvzmRxV/3KLtHMPoYfAxfL21RkuII88QNZVhZ/5Qbx2zq6F+AkZnzdSeBOw69nT30nAs5DqyOM8kBLVYYXplNux9R5PqedELpocsiLjNYMUnhIqMl30m5/E6PpcJvvu8urmlyp1cN0viBJowggMkNkkTGZ1mKfs8bv4F/jBf0CwBf80tD5BTuWemqJ1pl32idE/V0RywAk87aiKWN8/2YHzBps6xic/d4smc8p9UF0IJecyAJPSvs6ZaZfAGvh1EQRH4S51Vg8HXOia9CiKI+9gU30lWv2evOvc4AIS7sbwzEQnaTCG1Dh6XYrjlmLjHOno8biWgeXNAsKq+Q=
+  email:
+  - ludovic.piot@thegaragebandofit.com
+  on_success: always
+  on_failure: always
+jobs:
+  include:
+  - stage: deploy-re7
+    script:
+    - bash -c 'docker run
+      --volume "$(pwd)/terraform":/terraform-code
+      --volume "$(pwd)/secrets":/secrets
+      --volume "$(pwd)/vars":/vars
+      --env TF_VAR_FILE=/vars/re7.tfvars
+      --env TF_BACKEND_FILE=/vars/backend-lof-ws-test.hcl
+      --env GOOGLE_PROJECT=lof-ws-test
+      --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/lof-ws-test.json"
+      --workdir /terraform-code/
+      thegaragebandofit/infra-as-code-tools:gcl286-ter0.12.24
+      /terraform-code/code/provision.sh'
+  - stage: refresh-re7-db
+    script:
+    - bash -c 'docker run
+      --volume "$(pwd)/terraform":/terraform-code
+      --volume "$(pwd)/secrets":/secrets
+      --volume "$(pwd)/vars":/vars
+      --env TF_VAR_FILE=/vars/re7.tfvars
+      --env TF_BACKEND_FILE=/vars/backend-lof-ws-test.hcl
+      --env GOOGLE_PROJECT=lof-ws-test
+      --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/lof-ws-test.json"
+      --workdir /terraform-code/
+      thegaragebandofit/infra-as-code-tools:gcl286-ter0.12.24
+      /terraform-code/code/prepare-refresh-db.sh'
+  - stage: deploy-prod
+    script:
+    - bash -c 'docker run
+      --volume "$(pwd)/terraform":/terraform-code
+      --volume "$(pwd)/secrets":/secrets
+      --volume "$(pwd)/vars":/vars
+      --env TF_VAR_FILE=/vars/prod.tfvars
+      --env TF_BACKEND_FILE=/vars/backend-lof-ws-prod.hcl
+      --env GOOGLE_PROJECT=lof-ws-prod
+      --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/lof-ws-prod.json"
+      --workdir /terraform-code/
+      thegaragebandofit/infra-as-code-tools:gcl286-ter0.12.24
+      /terraform-code/code/provision.sh'
+  - stage: refresh-prod-db
+    script:
+    - bash -c 'docker run
+      --volume "$(pwd)/terraform":/terraform-code
+      --volume "$(pwd)/secrets":/secrets
+      --volume "$(pwd)/vars":/vars
+      --env TF_VAR_FILE=/vars/prod.tfvars
+      --env TF_BACKEND_FILE=/vars/backend-lof-ws-prod.hcl
+      --env GOOGLE_PROJECT=lof-ws-prod
+      --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/lof-ws-prod.json"
+      --workdir /terraform-code/
+      thegaragebandofit/infra-as-code-tools:gcl286-ter0.12.24
+      /terraform-code/code/prepare-refresh-db.sh'
+  - stage: build-re7-packer-img
+    script:
+    - bash -c 'echo "build re7 packer image"'
+  - stage: build-prod-packer-img
+    script:
+    - bash -c 'echo "build prod packer image"'
+stages:
+- name: deploy-re7
+  if: branch = re7 AND type = push
+- name: refresh-re7-db
+  if: tag = refresh-re7-db
+- name: deploy-prod
+  if: branch = prod AND type = push
+- name: refresh-prod-db
+  if: tag = refresh-prod-db
+- name: build-re7-packer-img
+  if: tag = build-re7-packer-img
+- name: build-prod-packer-img
+  if: tag = build-prod-packer-img
+before_install:
+- openssl aes-256-cbc -K $encrypted_983a74156a08_key -iv $encrypted_983a74156a08_iv -in secrets/lof-ws-test.json.enc -out secrets/lof-ws-test.json -d
+- openssl aes-256-cbc -K $encrypted_42099b4af021_key -iv $encrypted_42099b4af021_iv -in secrets/lof-ws-prod.json.enc -out secrets/lof-ws-prod.json -d
+

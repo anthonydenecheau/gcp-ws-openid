@@ -1,0 +1,11 @@
+*.tfstate
+*.tfstate.backup
+*.tfstate.*.backup
+.credentials
+.terraform
+tfplan
+.DS_Store
+.wip
+*.orig
+*.swp
+secrets/*.json
