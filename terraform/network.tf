@@ -1,8 +1,3 @@
-#resource "google_compute_network" "default" {
-#  name                    = var.network-name
-#  auto_create_subnetworks = "false"
-#}
-
 resource "google_compute_network" "private_network" {
   provider = google-beta
   name = var.network-name
@@ -30,6 +25,11 @@ resource "google_compute_global_address" "openid-ws-lb" {
   name       = "${var.network-name}-lb"
   ip_version = var.ip-version
 }
+
+#resource "google_compute_network" "default" {
+#  name                    = var.network-name
+#  auto_create_subnetworks = "false"
+#}
 
 #resource "google_compute_subnetwork" "default" {
 #  name                     = var.network-name
