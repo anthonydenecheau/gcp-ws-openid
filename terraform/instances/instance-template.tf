@@ -45,7 +45,8 @@ resource "google_compute_instance_template" "default" {
   }
 
   network_interface {
-    subnetwork = var.gce_instance["subnetwork"]
+    #subnetwork = var.gce_instance["subnetwork"]
+    network = var.gce_instance["network"]
     access_config {
       // Ephemeral IP
     }

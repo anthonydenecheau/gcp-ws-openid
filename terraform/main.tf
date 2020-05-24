@@ -10,6 +10,7 @@
 module "scc-docker-servers" {
     source = "./instances"
 
+
     gce_image = {
         family = "scc-docker-server-image"
     }
@@ -25,8 +26,9 @@ module "scc-docker-servers" {
         description = "This template is used to create docker server instances."
         type        = "n1-standard-2"
         name_prefix = "scc-docker-server-"
-        subnetwork  = google_compute_subnetwork.default.self_link
-        network     = google_compute_network.default.self_link
+        #subnetwork  = google_compute_subnetwork.default.self_link
+        #network     = google_compute_network.default.self_link
+        network = google_compute_network.private_network.self_link
         application_name       = var.application_name
     }
 
