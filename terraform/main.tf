@@ -70,6 +70,10 @@ module "scc-docker-servers" {
         #subnetwork  = google_compute_subnetwork.default.self_link
         #network     = google_compute_network.default.self_link
         network = google_compute_network.private_network.self_link
+        database_private_ip         = module.postgres_ha_db.instance_sql_private_ipv4
+        database_name               = module.postgres_ha_db.instance_sql_name
+        database_user               = var.database_user
+        database_generated_password = module.postgres_db_user.generated_user_password
         application_name       = var.application_name
     }
 

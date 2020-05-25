@@ -22,6 +22,10 @@ resource "google_compute_instance_template" "default" {
     map(
       "startup-script", file(format("%s/code/startup_script.sh", path.cwd)),
       "docker-compose-yaml", file(format("%s/code/docker-compose.yml", path.cwd)),
+      "database-private-ip", var.gce_instance["database_private_ip"],
+      "database-name", var.gce_instance["database_name"],
+      "database-user", var.gce_instance["database_user"],
+      "database-generated-password", var.gce_instance["database_generated_password"],
       "application-name", var.gce_instance["application_name"]
     )
   )

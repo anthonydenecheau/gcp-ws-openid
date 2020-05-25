@@ -23,12 +23,13 @@ docker run -it --volume "/gcp-ws-openid/terraform":/terraform-code \
   thegaragebandofit/infra-as-code-tools:latest
   
 ## Commande terraform
+terraform force-unlock LOCK_ID 
 terraform init --backend-config='/vars/backend-ws-pedigree-dev.hcl'
 terraform plan --var-file='/vars/dev.tfvars'
 terraform apply -auto-approve --var-file='/vars/dev.tfvars'
 terraform destroy -auto-approve --var-file='/vars/dev.tfvars'
     
-gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/gcp-ws-openid.json
+gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/ws-openid.json
 gcloud compute project-info describe --project rugged-shuttle-277619
 
 ## SSL
@@ -48,6 +49,46 @@ curl -I https://open-id.elhadir.com
 #ano date
 docker-machine restart
   
+## keycloak
+# https://github.com/keycloak/keycloak-containers/blob/10.0.1/server/README.md
+export DATABASE_PRIVATE_IP=35.205.131.124
+export DB_DATABASE=openid-db-96db674e
+export DB_USER=openid-user
+export DB_PASSWORD=824d72138be7f5c760077496df90471d721c3c26
+export DB_PORT=5432
+
+docker run -p 8080:8080 \
+ -e DB_VENDOR=POSTGRES \
+ -e DB_ADDR=${DATABASE_PRIVATE_IP} \
+ -e DB_DATABASE=${DB_DATABASE} \
+ -e DB_PORT=${DB_PORT} \
+ -e DB_USER=${DB_USER} \
+ -e DB_PASSWORD=${DB_PASSWORD} \
+ -e KEYCLOAK_USER=admin \
+ -e KEYCLOAK_PASSWORD=Pa55w0rd \
+ -e PROXY_ADDRESS_FORWARDING="true" \
+ -e KEYCLOAK_STATISTICS=db \
+ jboss/keycloak:10.0.1
+
+# -e JDBC_PARAMS="ssl=false" \
+
+# connexion POSTGRES
+https://github.com/keycloak/keycloak-containers/blob/master/server/tools/cli/databases/postgres/change-database.cli
+
+12:07:43,465 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([("subsystem" => "microprofile-metrics-smallrye")]): java.lang.NullPointerException
+        at org.wildfly.extension.microprofile.metrics-smallrye@19.1.0.Final//org.wildfly.extension.microprofile.metrics.MicroProfileMetricsSubsystemAdd$2.execute(MicroProfileMetricsSubsystemAdd.java:86)
+        at org.jboss.as.controller@11.1.1.Final//org.jboss.as.controller.AbstractOperationContext.executeStep(AbstractOperationContext.java:999)
+        at org.jboss.as.controller@11.1.1.Final//org.jboss.as.controller.AbstractOperationContext.processStages(AbstractOperationContext.java:743)
+        at org.jboss.as.controller@11.1.1.Final//org.jboss.as.controller.AbstractOperationContext.executeOperation(AbstractOperationContext.java:467)
+        at org.jboss.as.controller@11.1.1.Final//org.jboss.as.controller.OperationContextImpl.executeOperation(OperationContextImpl.java:1413)
+        at org.jboss.as.controller@11.1.1.Final//org.jboss.as.controller.ModelControllerImpl.boot(ModelControllerImpl.java:527)
+        at org.jboss.as.controller@11.1.1.Final//org.jboss.as.controller.AbstractControllerService.boot(AbstractControllerService.java:515)
+        at org.jboss.as.controller@11.1.1.Final//org.jboss.as.controller.AbstractControllerService.boot(AbstractControllerService.java:477)
+        at org.jboss.as.server@11.1.1.Final//org.jboss.as.server.ServerService.boot(ServerService.java:448)
+        at org.jboss.as.server@11.1.1.Final//org.jboss.as.server.ServerService.boot(ServerService.java:401)
+        at org.jboss.as.controller@11.1.1.Final//org.jboss.as.controller.AbstractControllerService$1.run(AbstractControllerService.java:416)
+        at java.base/java.lang.Thread.run(Thread.java:834)
+
 # volume
 https://stackoverflow.com/questions/57756835/docker-toolbox-volume-mounting-not-working-on-windows-10  
 docker-machine ssh default
