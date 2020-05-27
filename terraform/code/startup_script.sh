@@ -16,12 +16,10 @@ google_metadata_get_file docker-compose-yaml > ~/docker-compose.yml
 
 echo "Sourcing environnement variables..." >> ~/startup-script.log
 export DATABASE_PRIVATE_IP=$(google_metadata_get_envvar database-private-ip)
-export DATABASE_NAME=$(google_metadata_get_envvar database-name)
 export DATABASE_USER=$(google_metadata_get_envvar database-user)
 export DATABASE_GENERATED_PASSWORD=$(google_metadata_get_envvar database-generated-password)
 
 echo "DATABASE_PRIVATE_IP:" $DATABASE_PRIVATE_IP
-echo "DATABASE_NAME:" $DATABASE_NAME
 echo "DATABASE_USER:" $DATABASE_USER
 echo "DATABASE_GENERATED_PASSWORD:" $DATABASE_GENERATED_PASSWORD
 
