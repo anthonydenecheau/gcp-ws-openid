@@ -28,8 +28,17 @@ terraform plan --var-file='/vars/dev.tfvars'
 terraform apply -auto-approve --var-file='/vars/dev.tfvars'
 terraform destroy -auto-approve --var-file='/vars/dev.tfvars'
     
-gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/gcp-ws-openid.json
+gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/ws-openid.json
 gcloud compute project-info describe --project rugged-shuttle-277619
+
+gcloud services enable cloudresourcemanager.googleapis.com
+gcloud services enable cloudbilling.googleapis.com
+gcloud services enable iam.googleapis.com
+gcloud services enable compute.googleapis.com
+gcloud services enable serviceusage.googleapis.com
+gcloud services enable logging.googleapis.com
+gcloud services enable sql-component.googleapis.com
+gcloud services enable storage-component.googleapis.com
 
 ## SSL
 # https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs
@@ -59,3 +68,4 @@ www.open-id.elhadir.com
 Adresse de destination :
 34.107.200.160
 
+terraform state rm 'google_project_service.gcp_services'

@@ -10,7 +10,6 @@
 module "scc-docker-servers" {
     source = "./instances"
 
-
     gce_image = {
         family = "scc-docker-server-image"
     }

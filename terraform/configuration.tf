@@ -5,7 +5,6 @@ terraform {
 }
 
 // Configure Google Cloud provider
-
 provider "google" {
   version         = "~> 3.0"
   project         = var.project
