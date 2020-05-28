@@ -1,37 +1,46 @@
-cd ../../developpement/data/gcp-ws-openid/
+## Contruction de l'image à l'aide de Packer
 docker run -it --volume "/gcp-ws-openid/terraform":/terraform-code \
   --volume "/gcp-ws-openid/packer":/packer \
   --volume "/gcp-ws-openid/secrets":/secrets \
   --volume "/gcp-ws-openid/vars":/vars \
   --env TF_VAR_FILE=/vars/dev.tfvars \
   --env GOOGLE_PROJECT=rugged-shuttle-277619 \
-  --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-ws-openid.json" \
+  --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/ws-openid.json" \
   --workdir /terraform-code/ \
   thegaragebandofit/infra-as-code-tools:gcl275-ter0.12.18-pac1.5.1
   
-
 packer build -on-error=ask -var-file=ws-pedigree-dev-variables.json gcp_docker_debian_server.json
 
+## Bastion
 docker run -it --volume "/gcp-ws-openid/terraform":/terraform-code \
   --volume "/gcp-ws-openid/packer":/packer \
   --volume "/gcp-ws-openid/secrets":/secrets \
   --volume "/gcp-ws-openid/vars":/vars \
   --env TF_VAR_FILE=/vars/dev.tfvars \
   --env GOOGLE_PROJECT=rugged-shuttle-277619 \
-  --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-ws-openid.json" \
+  --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/ws-openid.json" \
   --workdir /terraform-code/ \
   thegaragebandofit/infra-as-code-tools:latest
   
-  
+## Commande terraform
 terraform init --backend-config='/vars/backend-ws-pedigree-dev.hcl'
 terraform plan --var-file='/vars/dev.tfvars'
 terraform apply -auto-approve --var-file='/vars/dev.tfvars'
 terraform destroy -auto-approve --var-file='/vars/dev.tfvars'
-  
-gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/gcp-ws-openid.json
+    
+gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/ws-openid.json
 gcloud compute project-info describe --project rugged-shuttle-277619
 
-# SSL
+gcloud services enable cloudresourcemanager.googleapis.com
+gcloud services enable cloudbilling.googleapis.com
+gcloud services enable iam.googleapis.com
+gcloud services enable compute.googleapis.com
+gcloud services enable serviceusage.googleapis.com
+gcloud services enable logging.googleapis.com
+gcloud services enable sql-component.googleapis.com
+gcloud services enable storage-component.googleapis.com
+
+## SSL
 # https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs
 gcloud compute ssl-certificates list \
         --global
@@ -42,7 +51,7 @@ gcloud compute ssl-certificates describe scc-docker-server-ssl-certificate \
 Attendre max 30min pour que le LoadBalancer puisse l'utiliser ...
 curl -I https://open-id.elhadir.com
 
-# cloud sql
+## Cloud SQL
 # https://www.terraform.io/docs/providers/google/r/sql_database_instance.html
 
 #ano date
@@ -59,3 +68,4 @@ www.open-id.elhadir.com
 Adresse de destination :
 34.107.200.160
 
+terraform state rm 'google_project_service.gcp_services'
