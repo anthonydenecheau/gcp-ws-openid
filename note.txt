@@ -28,7 +28,10 @@ terraform plan --var-file='/vars/dev.tfvars'
 terraform apply -auto-approve --var-file='/vars/dev.tfvars'
 terraform destroy -auto-approve --var-file='/vars/dev.tfvars'
     
-gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/gcp-ws-openid.json
+terraform destroy -auto-approve --var-file=/vars/dev.tfvars --target=module.postgres_db_user
+terraform destroy -auto-approve --var-file=/vars/dev.tfvars --target=module.postgres_ha_db
+
+gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/ws-openid.json
 gcloud compute project-info describe --project rugged-shuttle-277619
 
 ## SSL
