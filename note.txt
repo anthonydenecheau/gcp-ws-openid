@@ -31,6 +31,26 @@ terraform destroy -auto-approve --var-file='/vars/dev.tfvars'
     
 gcloud auth activate-service-account --project=rugged-shuttle-277619 --key-file=/secrets/ws-openid.json
 gcloud compute project-info describe --project rugged-shuttle-277619
+gcloud services list --available
+
+gcloud services enable cloudresourcemanager.googleapis.com
+gcloud services enable cloudbilling.googleapis.com
+gcloud services enable container.googleapis.com
+gcloud services enable containerregistry.googleapis.com
+gcloud services enable iam.googleapis.com
+gcloud services enable compute.googleapis.com
+
+gcloud services enable serviceusage.googleapis.com
+gcloud services enable servicenetworking.googleapis.com
+
+gcloud services enable logging.googleapis.com
+
+gcloud services enable sqladmin.googleapis.com
+
+gcloud services enable storage-component.googleapis.com
+
+gcloud services enable run.googleapis.com
+gcloud services enable runtimeconfig.googleapis.com
 
 ## SSL
 # https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs
@@ -62,6 +82,27 @@ https://github.com/keycloak/keycloak-containers/blob/master/server/tools/cli/dat
 # volume
 https://stackoverflow.com/questions/57756835/docker-toolbox-volume-mounting-not-working-on-windows-10  
 docker-machine ssh default
+
+# cloud run
+https://www.terraform.io/docs/providers/google/r/cloud_run_service.html
+
+C:\developpement\data\cloud-run-hello
+
+# cloud build
+https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github?hl=fr
+https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-cloud-run?hl=fr
+
+# https://phpnews.io/feeditem/google-cloud-build-google-cloud-run-fixing-error-gcloud-run-deploy-permission-denied-the-caller-does-not-have-permission
+# Grant the Cloud Run Admin role to the Cloud Build service account
+gcloud projects add-iam-policy-binding rugged-shuttle-277619 \
+  --member "serviceAccount:895901133514@cloudbuild.gserviceaccount.com" \
+  --role roles/run.admin
+
+# Grant the IAM Service Account User role to the Cloud Build service account on the Cloud Run runtime service account
+gcloud iam service-accounts add-iam-policy-binding \
+  895901133514-compute@developer.gserviceaccount.com \
+  --member="serviceAccount:895901133514@cloudbuild.gserviceaccount.com" \
+  --role="roles/iam.serviceAccountUser"
 
 # OVH
 Domaine a rediriger :
