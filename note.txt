@@ -91,6 +91,12 @@ C:\developpement\data\cloud-run-hello
 # cloud build
 https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github?hl=fr
 https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-cloud-run?hl=fr
+https://github.com/gruntwork-io/terraform-google-ci/blob/master/examples/cloud-build-github-gke/main.tf
+
+# cloud registry
+https://github.com/gruntwork-io/terraform-google-ci/tree/master/modules/gcr-registry
+
+terraform import --var-file='/vars/dev.tfvars' -provider=google-beta google_cloudbuild_trigger.default projects/rugged-shuttle-277619/triggers/DeploiementCloudRun 
 
 # https://phpnews.io/feeditem/google-cloud-build-google-cloud-run-fixing-error-gcloud-run-deploy-permission-denied-the-caller-does-not-have-permission
 # Grant the Cloud Run Admin role to the Cloud Build service account
