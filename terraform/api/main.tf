@@ -20,6 +20,11 @@ resource "google_cloud_run_service" "default" {
             project     = var.gcr_igm["project"]
             environment = "dev"
         }
+        annotations = {
+          "autoscaling.knative.dev/maxScale"      = "1000"
+          "run.googleapis.com/cloudsql-instances" = var.gcr_igm["db_connection_name"]
+          "run.googleapis.com/client-name"        = "terraform"
+        }
     }
 
   }

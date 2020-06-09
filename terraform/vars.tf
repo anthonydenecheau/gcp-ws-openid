@@ -59,6 +59,20 @@ variable ip-version {
 # -----------------------------------------------------------------------------
 # database
 # -----------------------------------------------------------------------------
+variable "database_instance_name" {
+  description = "The database instance used by the project."
+  default     = "openid-db"
+}
+
+variable "database_user_pedigree" {
+  description = "The database user dedicated to the cloud run."
+  default     = "openid-pedigree"
+}
+
+variable "database_user_openid" {
+  description = "The database user dedicated to the cloud run."
+  default     = "openid-user"
+}
 
 # -----------------------------------------------------------------------------
 # instances
