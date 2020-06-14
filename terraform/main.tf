@@ -25,8 +25,13 @@ module "postgres_ha_db" {
         owner = "adenecheau"
     }
     authorized_networks = [
-        { name = "adenecheau",
+        { 
+            name = "adenecheau",
             value = "86.245.15.48/32"
+        },
+        {
+            name = "cloudrun"
+            value = "216.239.36.53/32"
         }
     ]
 }
@@ -98,9 +103,14 @@ module "scc-api" {
     source = "./api"
 
     gcr_igm = {
-        region = var.region
-        project = "ws-pedigree-api"
-        db_connection_name = module.postgres_ha_db.connection_name
+        region                      = var.region
+        project                     = "ws-pedigree-api"
+        database_private_ip         = module.postgres_ha_db.instance_sql_private_ipv4
+        db_connection_name          = module.postgres_ha_db.connection_name
+        database_user               = var.database_user_pedigree
+        database_name               = var.database_user_pedigree
+        database_generated_password = module.postgres_db_user_pedigree.generated_user_password
+        service_account             = var.service_account
     }
 }
 

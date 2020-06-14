@@ -1,6 +1,4 @@
 
-
-
 resource "google_sql_database_instance" "default" {
   provider = google-beta
   
@@ -23,6 +21,13 @@ resource "google_sql_database_instance" "default" {
     user_labels = var.user_labels
 
     ip_configuration {
+      dynamic "authorized_networks" {
+        for_each = var.authorized_networks
+        content {
+          name  = lookup(authorized_networks.value, "name", null)
+          value = authorized_networks.value.value
+        }
+      }
       ipv4_enabled        = lookup(var.database_instance, "ipv4_enabled", true)
       require_ssl         = lookup(var.database_instance, "require_ssl", false)
       private_network     = var.database_instance["private_network"]

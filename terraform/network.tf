@@ -3,6 +3,14 @@ resource "google_compute_network" "private_network" {
   name = var.network-name
 }
 
+#resource "google_vpc_access_connector" "connector" {
+#  name          = "${var.network-name}-vpc"
+#  region        = var.region
+#  ip_cidr_range = "10.8.0.0/28"
+#  network       = var.network-name
+#  project       = var.project
+#}
+
 resource "google_compute_global_address" "private_ip_address" {
   provider = google-beta
 

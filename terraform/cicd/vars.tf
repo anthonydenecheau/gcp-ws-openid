@@ -7,7 +7,7 @@ variable "github_owner" {
 variable "github_repository" {
   description = "Name of the GitHub Repository."
   type        = string
-  default     = "cloud-run-hello"
+  default     = "poc-json-quickstart"
 }
 
 variable "branch_name" {

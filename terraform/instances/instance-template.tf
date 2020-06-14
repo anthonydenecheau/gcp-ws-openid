@@ -79,6 +79,8 @@ resource "google_compute_firewall" "default-openidserver" {
   name    = "${lookup(var.gce_instance, "name_prefix", "new_instance_")}-vm-https"
   network = var.gce_instance["network"]
 
+  # allow outgoing connections on TCP port 3307
+  # Cf. https://github.com/GoogleCloudPlatform/cloud-sql-jdbc-socket-factory/blob/master/README.md
   allow {
     protocol = "tcp"
     ports    = ["8080"]

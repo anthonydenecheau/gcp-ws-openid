@@ -42,6 +42,8 @@ gcloud services enable compute.googleapis.com
 
 gcloud services enable serviceusage.googleapis.com
 gcloud services enable servicenetworking.googleapis.com
+gcloud services enable secretmanager.googleapis.com
+gcloud services enable "?API Serverless VPC Access 
 
 gcloud services enable logging.googleapis.com
 
@@ -63,8 +65,16 @@ gcloud compute ssl-certificates describe scc-docker-server-ssl-certificate \
 Attendre max 30min pour que le LoadBalancer puisse l'utiliser ...
 curl -I https://open-id.elhadir.com
 
+##Cloud VPC connector
+https://cloud.google.com/vpc/docs/configure-serverless-vpc-access#creating_a_connector
+
 ## Cloud SQL
 # https://www.terraform.io/docs/providers/google/r/sql_database_instance.html
+
+## Cloud Secret
+# https://cloud.google.com/cloud-build/docs/securing-builds/use-encrypted-secrets-credentials?hl=fr
+Dans le tableau des autorisations, recherchez l'e-mail se terminant par @cloudbuild.gserviceaccount.com, puis cliquez sur l'icône en forme de crayon.
+Ajoutez un rôle Secret Manager Secret Accessor
 
 #ano date
 docker-machine restart
@@ -85,13 +95,22 @@ docker-machine ssh default
 
 # cloud run
 https://www.terraform.io/docs/providers/google/r/cloud_run_service.html
+https://github.com/jtama-op/quarkus/tree/18280ee018d82acef601fc022a5c6923bfb7a451/extensions/agroal
+https://github.com/jtama-op/quarkus/commit/eb27113c050b2c98a0ef046a84d366484adf6e21#diff-98aae1b619d01efcac77e30c84d4ab31
+https://qiita.com/koduki/items/fa60e87e1d8bb28c2be4
+https://medium.com/swlh/preparing-your-django-application-for-google-cloud-run-7c8cb7b7464b
+
 
 C:\developpement\data\cloud-run-hello
 
 # cloud build
+https://cloud.google.com/cloud-build/docs/build-config?hl=fr
 https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github?hl=fr
 https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-cloud-run?hl=fr
 https://github.com/gruntwork-io/terraform-google-ci/blob/master/examples/cloud-build-github-gke/main.tf
+
+https://medium.com/serverlessguru/serverless-ci-cd-cloud-build-e8c09e9a1018
+https://medium.com/@alexismp/deploying-a-quarkus-app-to-google-cloud-run-c4a8ca3be526
 
 # cloud registry
 https://github.com/gruntwork-io/terraform-google-ci/tree/master/modules/gcr-registry
@@ -116,6 +135,23 @@ open-id.elhadir.com
 www.open-id.elhadir.com
 Adresse de destination :
 34.107.200.160
+
+#keycloak
+export access_token=$(\
+    curl -X POST https://open-id.elhadir.com/auth/realms/quarkus/protocol/openid-connect/token \
+    --user backend-service:secret \
+    -H 'content-type: application/x-www-form-urlencoded' \
+    -d 'username=alice&password=alice&grant_type=password' | jq --raw-output '.access_token' \
+ )
+
+ curl -v -X GET \
+  https://ws-pedigree-service-uujqss2rqq-ew.a.run.app/api/users/me \
+  -H "Authorization: Bearer "$access_token
+
+curl -v -X GET \
+  https://ws-pedigree-service-uujqss2rqq-ew.a.run.app/api/public/fruits/1 \
+  -H "Authorization: Bearer "$access_token
+
 
 # Ano Destroy
 Error: Error, failed to deleteuser openid-user in instance openid-db-5937fb20:
