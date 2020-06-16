@@ -32,7 +32,23 @@ module "postgres_ha_db" {
         {
             name = "cloudrun"
             value = "216.239.36.53/32"
-        }
+        },
+        {
+            name = "domainmapping.1"
+            value = "213.186.33.5"
+        },        
+        {
+            name = "domainmapping.2"
+            value = "216.239.34.21"
+        },        
+        {
+            name = "domainmapping.3"
+            value = "216.239.36.21"
+        },        
+        {
+            name = "domainmapping.4"
+            value = "216.239.38.21"
+        },        
     ]
 }
 
@@ -104,14 +120,45 @@ module "scc-api" {
 
     gcr_igm = {
         region                      = var.region
-        project                     = "ws-pedigree-api"
+        project                     = var.project
         database_private_ip         = module.postgres_ha_db.instance_sql_private_ipv4
         db_connection_name          = module.postgres_ha_db.connection_name
-        database_user               = var.database_user_pedigree
-        database_name               = var.database_user_pedigree
-        database_generated_password = module.postgres_db_user_pedigree.generated_user_password
         service_account             = var.service_account
     }
+
+    environment_variables = [
+        {
+            name = "DISABLE_SIGNAL_HANDLERS"
+            value = "1"
+        },
+        {
+            name = "URL_TO_KEYCLOAK"
+            value = "https://open-id.elhadir.com/auth/realms/ws"
+        },
+        {
+          name = "DATASOURCE_USER"
+          value = var.database_user_pedigree
+        },
+        {
+          name = "DATASOURCE_PWD"
+          value = module.postgres_db_user_pedigree.generated_user_password
+        },
+        {
+          name = "DATASOURCE_URL"
+          value = module.postgres_ha_db.connection_name
+        },
+        {
+          name = "DATASOURCE_DBNAME"
+          value = var.database_user_pedigree
+        },
+    ]
+}
+
+# -----------------------------------------------------------------------------
+# secrets
+# -----------------------------------------------------------------------------
+module "scc-secrets" {
+    source = "./secret"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -119,7 +166,13 @@ module "scc-api" {
 # ---------------------------------------------------------------------------------------------------------------------
 module "scc-cicd" {
     source = "./cicd"
+}
 
+module "scc-cicd-dev" {
+    source              = "./cicd"
+    github_owner        = "anthonydenecheau"
+    github_repository   = "pedigree-service"
+    branch_name         = "featCloudRun"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

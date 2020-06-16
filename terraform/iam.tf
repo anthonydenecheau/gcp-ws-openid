@@ -22,3 +22,10 @@ resource "google_project_iam_member" "secret-manager-accessor" {
   role = "roles/secretmanager.secretAccessor"
   member = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
 }
+
+resource "google_project_iam_member" "cloud_run_admin" {
+  provider    = google-beta
+  project = var.project
+  role = "roles/run.admin"
+  member = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+}

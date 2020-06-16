@@ -109,8 +109,16 @@ https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github
 https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-cloud-run?hl=fr
 https://github.com/gruntwork-io/terraform-google-ci/blob/master/examples/cloud-build-github-gke/main.tf
 
+https://cloud.google.com/solutions/managing-infrastructure-as-code?hl=fr
+
+Optimisation compilation
+https://cloud.google.com/java/getting-started/jib?hl=fr
+
+Ci/cd
+https://cloud.google.com/run/docs/continuous-deployment-with-cloud-build?hl=fr
 https://medium.com/serverlessguru/serverless-ci-cd-cloud-build-e8c09e9a1018
 https://medium.com/@alexismp/deploying-a-quarkus-app-to-google-cloud-run-c4a8ca3be526
+https://medium.com/google-cloud/simplifying-continuous-deployment-to-cloud-run-with-cloud-build-including-custom-domain-setup-ssl-22d23bed5cd6
 
 # cloud registry
 https://github.com/gruntwork-io/terraform-google-ci/tree/master/modules/gcr-registry
