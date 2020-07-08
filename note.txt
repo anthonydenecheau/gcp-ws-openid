@@ -12,6 +12,7 @@ docker run -it --volume "/gcp-ws-openid/terraform":/terraform-code \
 packer build -on-error=ask -var-file=ws-pedigree-dev-variables.json gcp_docker_debian_server.json
 
 ## Bastion
+# LINUX
 docker run -it --volume "/gcp-ws-openid/terraform":/terraform-code \
   --volume "/gcp-ws-openid/packer":/packer \
   --volume "/gcp-ws-openid/secrets":/secrets \
@@ -21,7 +22,19 @@ docker run -it --volume "/gcp-ws-openid/terraform":/terraform-code \
   --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/ws-openid.json" \
   --workdir /terraform-code/ \
   thegaragebandofit/infra-as-code-tools:latest
-  
+
+# WINDOWS
+docker run -it --volume "%cd%/terraform":/terraform-code ^
+  --volume "%cd%/packer":/packer ^
+  --volume "%cd%/secrets":/secrets ^
+  --volume "%cd%/vars":/vars ^
+  --env TF_VAR_FILE=/vars/dev.tfvars ^
+  --env GOOGLE_PROJECT=rugged-shuttle-277619 ^
+  --env GOOGLE_APPLICATION_CREDENTIALS="/secrets/ws-openid.json" ^
+  --workdir /terraform-code/ ^
+  thegaragebandofit/infra-as-code-tools:latest
+
+
 ## Commande terraform
 terraform force-unlock LOCK_ID 
 terraform init --backend-config='/vars/backend-ws-pedigree-dev.hcl'
@@ -71,7 +84,13 @@ https://cloud.google.com/vpc/docs/configure-serverless-vpc-access#creating_a_con
 ## Cloud SQL
 # https://www.terraform.io/docs/providers/google/r/sql_database_instance.html
 
-## Cloud Secret
+## SQL proxy
+cd C:\developpement\app\Google
+gcloud auth login
+gcloud config set project rugged-shuttle-277619
+cloud_sql_proxy_x64.exe -instances=<INSTANCE_CONNECTION_NAME>=tcp:5432
+
+v## Cloud Secret
 # https://cloud.google.com/cloud-build/docs/securing-builds/use-encrypted-secrets-credentials?hl=fr
 Dans le tableau des autorisations, recherchez l'e-mail se terminant par @cloudbuild.gserviceaccount.com, puis cliquez sur l'icône en forme de crayon.
 Ajoutez un rôle Secret Manager Secret Accessor

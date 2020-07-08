@@ -10,21 +10,19 @@ services:
         DB_SCHEMA: public
         DB_USER: ${DATABASE_USER}
         DB_PASSWORD: ${DATABASE_GENERATED_PASSWORD}
+        AUTHENTICATION_KEY: ${AUTHENTICATION_KEY}
         KEYCLOAK_USER: admin
         KEYCLOAK_PASSWORD: Pa55w0rd
         # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
         #JDBC_PARAMS: "ssl=true"
         # Enabling proxy address forwarding
         PROXY_ADDRESS_FORWARDING: "true"
-#    command: "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/realm-api.json,/opt/jboss/keycloak/realm-app.json"
+        command:
+          - "-Dkeycloak.profile.feature.upload_scripts=enabled"
+#    command: "-b 0.0.0.0 -Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.import=/opt/jboss/keycloak/realm-api.json,/opt/jboss/keycloak/realm-app.json"
 #    volumes:
 #    - ./realm-api.json:/opt/jboss/keycloak/realm-api.json
 #    - ./realm-app.json:/opt/jboss/keycloak/realm-app.json
 #    - ../server/themes/mycompany:/opt/jboss/keycloak/themes/mycompany        
       ports:
         - 8080:8080
-#  webserver:
-#    image: nginxdemos/nginx-hello
-#    container_name: webserver
-#    ports:
-#      - "8080:8080"

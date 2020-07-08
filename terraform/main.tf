@@ -151,6 +151,11 @@ module "scc-api" {
           name = "DATASOURCE_DBNAME"
           value = var.database_user_pedigree
         },
+        {
+          name = "AUTHENTICATION_KEY"
+          value = "Kt7AXQVCDtUppWllOozehM98cJB0oUpn"
+        },
+        
     ]
 }
 
