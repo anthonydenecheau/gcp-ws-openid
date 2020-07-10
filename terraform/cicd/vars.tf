@@ -7,7 +7,7 @@ variable "github_owner" {
 variable "github_repository" {
   description = "Name of the GitHub Repository."
   type        = string
-  default     = "poc-json-quickstart"
+  default     = "pedigree-service"
 }
 
 variable "branch_name" {

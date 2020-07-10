@@ -71,3 +71,8 @@ variable dependencies {
   type        = list
   default     = []
 }
+
+variable db_environment {
+  description = "Current db environment."
+  default     = "myDbEnvironment"
+}

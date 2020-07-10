@@ -42,16 +42,27 @@ output self_link {
   value       = module.postgres_ha_db.self_link
 }
 
-output generated_db_user_pedigree_password {
-  description = "The auto generated pedigree user password if no input password was provided"
-  value       = module.postgres_db_user_pedigree.generated_user_password
-}
-
 output generated_db_user_openid_password {
   description = "The auto generated openid user password if no input password was provided"
   value       = module.postgres_db_user_openid.generated_user_password
 }
 
+output dev_generated_db_user_pedigree_password {
+  description = "The auto generated pedigree user password if no input password was provided"
+  value       = module.postgres_db_user_pedigree["dev"].generated_user_password
+}
+
+output qa_generated_db_user_pedigree_password {
+  description = "The auto generated pedigree user password if no input password was provided"
+  value       = module.postgres_db_user_pedigree["qa"].generated_user_password
+}
+
+output prod_generated_db_user_pedigree_password {
+  description = "The auto generated pedigree user password if no input password was provided"
+  value       = module.postgres_db_user_pedigree["prod"].generated_user_password
+}
+
+/*
 # -----------------------------------------------------------------------------
 # cloud run
 # -----------------------------------------------------------------------------
@@ -59,3 +70,4 @@ output ws {
   description = "Url to cloud run service"
   value = module.scc-api.ws-pedigree-service-url
 }
+*/

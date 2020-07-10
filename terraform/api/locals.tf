@@ -6,4 +6,5 @@ locals {
 
   # Should a DNS domain mapping be created?
   domain_mapping_present = var.dns_name != ""
+
 }

@@ -1,3 +1,20 @@
+locals {
+    description = "A list of maps including the required values for every environment"
+    environments = {
+    "dev" = {
+      user_prefix = "dev"
+      git_branch = "dev"
+    }
+    "qa" = {
+      user_prefix = "qa"
+      git_branch = "qa"
+    }
+    "prod" = {
+      user_prefix = "prod"
+      git_branch = "master"
+    }
+  }
+}
 
 # -----------------------------------------------------------------------------
 # database
@@ -55,13 +72,15 @@ module "postgres_ha_db" {
 # User WS pedigree
 module "postgres_db_user_pedigree" {
     source = "./database_user"
+    for_each = local.environments
 
     database_user = {
         project          = var.project
         db_instance_name = module.postgres_ha_db.instance_sql_name
-        user_name        = var.database_user_pedigree
-        db_name          = var.database_user_pedigree
+        user_name        = "${each.value.user_prefix}-${var.database_user_pedigree}"
+        db_name          = "${each.value.user_prefix}-${var.database_user_pedigree}"
     }
+    #depends_on = [module.postgres_ha_db]
 }
 
 # User keycloak
@@ -74,6 +93,7 @@ module "postgres_db_user_openid" {
         user_name        = var.database_user_openid
         db_name          = var.database_user_openid
     }
+    depends_on = [module.postgres_ha_db]
 }
 
 # -----------------------------------------------------------------------------
@@ -110,13 +130,18 @@ module "scc-docker-servers" {
         web_domain        = var.web_domain
         project           = var.project
     }
-}
 
+    depends_on = [module.postgres_db_user_openid]
+
+}
 # -----------------------------------------------------------------------------
 # cloud run
 # -----------------------------------------------------------------------------
 module "scc-api" {
     source = "./api"
+    for_each = local.environments
+
+    environment         = each.key
 
     gcr_igm = {
         region                      = var.region
@@ -137,11 +162,11 @@ module "scc-api" {
         },
         {
           name = "DATASOURCE_USER"
-          value = var.database_user_pedigree
+          value = "${each.value.user_prefix}-${var.database_user_pedigree}"
         },
         {
           name = "DATASOURCE_PWD"
-          value = module.postgres_db_user_pedigree.generated_user_password
+          value = module.postgres_db_user_pedigree[each.key].generated_user_password
         },
         {
           name = "DATASOURCE_URL"
@@ -149,7 +174,7 @@ module "scc-api" {
         },
         {
           name = "DATASOURCE_DBNAME"
-          value = var.database_user_pedigree
+          value = "${each.value.user_prefix}-${var.database_user_pedigree}"
         },
         {
           name = "AUTHENTICATION_KEY"
@@ -157,6 +182,8 @@ module "scc-api" {
         },
         
     ]
+
+    depends_on = [module.postgres_db_user_pedigree]
 }
 
 # -----------------------------------------------------------------------------
@@ -165,20 +192,26 @@ module "scc-api" {
 module "scc-secrets" {
     source = "./secret"
 }
-
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE A CLOUD BUILD TRIGGER
 # ---------------------------------------------------------------------------------------------------------------------
 module "scc-cicd" {
     source = "./cicd"
+    for_each = local.environments
+
+    github_owner        = "anthonydenecheau"
+    github_repository   = "pedigree-service"
+    branch_name         = each.value.git_branch
 }
 
+/*
 module "scc-cicd-dev" {
     source              = "./cicd"
     github_owner        = "anthonydenecheau"
     github_repository   = "pedigree-service"
     branch_name         = "featCloudRun"
 }
+*/
 
 # ---------------------------------------------------------------------------------------------------------------------
 # CONFIGURE THE GCR REGISTRY TO STORE THE CLOUD BUILD ARTIFACTS

@@ -1,6 +1,6 @@
 
 resource "google_cloud_run_service" "default" {
-  name     = "ws-pedigree-service"
+  name     = "${var.environment}-${var.service_name}"
   location = var.gcr_igm["region"]
   project  = var.gcr_igm["project"]
 
@@ -20,7 +20,7 @@ resource "google_cloud_run_service" "default" {
       #service_account_name = var.gcr_igm["service_account"]
 
       containers {
-        image = "gcr.io/rugged-shuttle-277619/poc-json-quickstart"
+        image = "gcr.io/rugged-shuttle-277619/pedigree-service"
 
         resources {
           limits = {
@@ -44,7 +44,7 @@ resource "google_cloud_run_service" "default" {
         labels = {
             owner       = "anthony-denecheau"
             project     = var.gcr_igm["project"]
-            environment = "dev"
+            environment = var.environment
         }
         annotations = {
           # Maximum number of auto-scaled instances.  For a container with
@@ -102,7 +102,7 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
 resource "google_cloud_run_domain_mapping" "default" {
   count = local.domain_mapping_present ? 1 : 0
   location = var.gcr_igm["region"]
-  name     = var.dns_name
+  name     = var.environment == "prod" ? var.dns_name : "${var.environment}.${var.dns_name}"
 
   metadata {
     namespace = var.gcr_igm["project"]

@@ -50,3 +50,11 @@ If and only if a domain mapping has been created, the
 EOI
   default     = "ws-pedigree-service.elhadir.com"
 }
+
+variable "service_name" {
+  default = "ws-pedigree-service"
+}
+
+variable "environment" {
+  default = "dev"
+}
