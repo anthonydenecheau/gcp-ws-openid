@@ -11,7 +11,7 @@ locals {
     }
     "prod" = {
       user_prefix = "prod"
-      git_branch = "master"
+      git_branch = "prod"
     }
   }
 }
@@ -180,7 +180,10 @@ module "scc-api" {
           name = "AUTHENTICATION_KEY"
           value = "Kt7AXQVCDtUppWllOozehM98cJB0oUpn"
         },
-        
+        {
+          name = "PROFILE"
+          value = each.key
+        },        
     ]
 
     depends_on = [module.postgres_db_user_pedigree]

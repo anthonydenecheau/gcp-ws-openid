@@ -18,6 +18,8 @@ output "domain_mapping_present" {
   value       = local.domain_mapping_present
 }
 
+/* 
+** TODO google_cloud_run_domain_mapping.default[0].status[0].resource_records is empty list of object
 output "domain_mapping_resource_record" {
   description = <<EOI
 Resource record for domain mapping. If a domain mapping is configured the
@@ -29,6 +31,7 @@ EOI
     rrdata = google_cloud_run_domain_mapping.default[0].status[0].resource_records[0].rrdata
   } : {}
 }
+*/
 
 output "domain_mapping_dns_name" {
   description = <<EOI

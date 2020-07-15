@@ -102,7 +102,7 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
 resource "google_cloud_run_domain_mapping" "default" {
   count = local.domain_mapping_present ? 1 : 0
   location = var.gcr_igm["region"]
-  name     = var.environment == "prod" ? var.dns_name : "${var.environment}.${var.dns_name}"
+  name     = "${var.environment}.${var.dns_name}"
 
   metadata {
     namespace = var.gcr_igm["project"]
