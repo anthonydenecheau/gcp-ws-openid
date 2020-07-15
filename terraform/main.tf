@@ -145,6 +145,8 @@ module "scc-api" {
     source = "./api"
     for_each = local.environments
 
+    environment = each.key
+    dns_name    = "${each.key}.ws-pedigree-service.elhadir.com"
     gcr_igm = {
         region                      = var.region
         project                     = var.project

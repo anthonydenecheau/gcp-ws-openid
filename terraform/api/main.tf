@@ -94,6 +94,17 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
   policy_data = data.google_iam_policy.noauth.policy_data
 }
 
+/*
+[TODO] Cloud DNS 
+resource "google_dns_record_set" "cname" {
+  name         = var.dns_name
+  managed_zone = var.cloud_dns_zone_name
+  rrdatas      = ["ghs.googlehosted.com."]
+  type         = "CNAME"
+  ttl          = 5
+}
+*/
+
 # Domain mapping for default web-application. Only present if the domain is
 # verified. We use the custom DNS name of the webapp if provided but otherwise
 # the webapp is hosted at [SERVICE NAME].[PROJECT DNS ZONE]. We can't create
@@ -102,7 +113,7 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
 resource "google_cloud_run_domain_mapping" "default" {
   count = local.domain_mapping_present ? 1 : 0
   location = var.gcr_igm["region"]
-  name     = "${var.environment}.${var.dns_name}"
+  name     = var.dns_name
 
   metadata {
     namespace = var.gcr_igm["project"]
@@ -111,4 +122,7 @@ resource "google_cloud_run_domain_mapping" "default" {
   spec {
     route_name = google_cloud_run_service.default.name
   }
+
+  depends_on = [google_cloud_run_service.default, google_cloud_run_service_iam_policy.noauth/*, google_dns_record_set.cname*/]
+
 }
