@@ -69,7 +69,9 @@ module "postgres_ha_db" {
     ]
 }
 
+# -----------------------------------------------------------------------------
 # User WS pedigree
+# -----------------------------------------------------------------------------
 module "postgres_db_user_pedigree" {
     source = "./database_user"
     for_each = local.environments
@@ -83,7 +85,9 @@ module "postgres_db_user_pedigree" {
     #depends_on = [module.postgres_ha_db]
 }
 
+# -----------------------------------------------------------------------------
 # User keycloak
+# -----------------------------------------------------------------------------
 module "postgres_db_user_openid" {
     source = "./database_user"
 
@@ -140,8 +144,6 @@ module "scc-docker-servers" {
 module "scc-api" {
     source = "./api"
     for_each = local.environments
-
-    environment         = each.key
 
     gcr_igm = {
         region                      = var.region
@@ -206,15 +208,6 @@ module "scc-cicd" {
     github_repository   = "pedigree-service"
     branch_name         = each.value.git_branch
 }
-
-/*
-module "scc-cicd-dev" {
-    source              = "./cicd"
-    github_owner        = "anthonydenecheau"
-    github_repository   = "pedigree-service"
-    branch_name         = "featCloudRun"
-}
-*/
 
 # ---------------------------------------------------------------------------------------------------------------------
 # CONFIGURE THE GCR REGISTRY TO STORE THE CLOUD BUILD ARTIFACTS
